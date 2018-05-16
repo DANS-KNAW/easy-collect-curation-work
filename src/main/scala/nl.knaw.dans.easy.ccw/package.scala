@@ -16,5 +16,5 @@
 package nl.knaw.dans.easy
 
 package object ccw {
-
+  type DatamanagerId = String
 }

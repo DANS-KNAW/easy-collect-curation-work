@@ -15,17 +15,73 @@
  */
 package nl.knaw.dans.easy.ccw
 
-import scala.util.{ Success, Try }
+import better.files.File
+import nl.knaw.dans.lib.logging.DebugEnhancedLogging
+import org.apache.commons.configuration.PropertiesConfiguration
 
-class EasyCollectCurationWorkApp(configuration: Configuration)  {
+import scala.collection.JavaConverters._
+import scala.language.postfixOps
+import scala.util.Try
 
-  def run(): Try[Unit] = {
+class EasyCollectCurationWorkApp(configuration: Configuration) extends DebugEnhancedLogging {
 
+  val commonCurationArea = File(configuration.properties.getString("curation.common.directory"))
+  val managerCurationDirString = configuration.properties.getString("curation.personal.directory")
+  val datamanagerProperties = configuration.datamanagers
 
-
-
-    ???
+  private def isCurated(depositProperties: PropertiesConfiguration): Boolean = {
+    depositProperties.getString("curation.performed", "") == "yes"
   }
 
+  private def noDescription(depositProperties: PropertiesConfiguration): Boolean = {
+    depositProperties.getString("state.description", "").isEmpty
+  }
 
+  private def noDatamanagerUserID(depositProperties: PropertiesConfiguration): Boolean = {
+    depositProperties.getString("datamanager.userId", "").isEmpty
+  }
+
+  private def noDatamanagerEmail(depositProperties: PropertiesConfiguration): Boolean = {
+    depositProperties.getString("datamanager.email", "").isEmpty
+  }
+
+  private def collectDeposit(datamanager: DatamanagerId, deposit: File): Unit = {
+    val depositProperties = new PropertiesConfiguration(deposit / "deposit.properties" toJava)
+    val state = depositProperties.getString("state.label", "")
+
+    if (isCurated(depositProperties)) {
+      if (state != "SUBMITTED" && state != "REJECTED" || noDescription(depositProperties) || noDatamanagerUserID(depositProperties) || noDatamanagerEmail(depositProperties)) {
+        if (state != "SUBMITTED" && state != "REJECTED")
+          logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, is curated, but is in state $state")
+        if (noDescription(depositProperties))
+          logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, has no state description property")
+        if (noDatamanagerUserID(depositProperties))
+          logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, has no datamanager userId property")
+        if (noDatamanagerEmail(depositProperties))
+          logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, has no datamanager email property")
+      }
+      else {
+        deposit moveTo commonCurationArea / deposit.name
+        logger.info(s"Deposit ${ deposit.name } ($state), curated by $datamanager, has been moved to common curation area")
+      }
+    }
+  }
+
+  private def collectDatamanagersCuratedDeposits(datamanager: DatamanagerId, dir: File) = {
+    dir.list.toList.map(deposit => collectDeposit(datamanager, deposit))
+  }
+
+  private def getDatamanagers(): List[String] = {
+    datamanagerProperties.getKeys.asScala.toList.map(key => key.substring(0, key.indexOf('.'))).distinct
+  }
+
+  def run(): Try[Unit] = Try {
+    logger.info(s"-- Collection of curated deposits started --")
+    getDatamanagers.map(datamanager => {
+      val curationDirectory = File(managerCurationDirString.replace("$unix-user", datamanager))
+      if (curationDirectory.exists)
+        collectDatamanagersCuratedDeposits(datamanager, curationDirectory)
+    })
+    logger.info(s"-- Collection of curated deposits completed --")
+  }
 }

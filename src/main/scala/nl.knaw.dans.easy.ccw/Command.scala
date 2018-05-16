@@ -15,22 +15,19 @@
  */
 package nl.knaw.dans.easy.ccw
 
-import java.nio.file.Paths
-
+import better.files.File
 import nl.knaw.dans.lib.error._
 import nl.knaw.dans.lib.logging.DebugEnhancedLogging
-import resource._
 
 import scala.language.reflectiveCalls
-import scala.util.control.NonFatal
-import scala.util.{ Failure, Try }
 
 object Command extends App with DebugEnhancedLogging {
-  val configuration = Configuration(Paths.get(System.getProperty("app.home")))
+
+  val configuration = Configuration(File(System.getProperty("app.home")))
+  //  val configuration = Configuration(File("home"))
   val app = new EasyCollectCurationWorkApp(configuration)
   app.run()
-    .doIfSuccess { _ => Console.err.println(s"OK") }
+    .doIfSuccess { _ => Console.err.println(s"Collection of curated deposits completed") }
     .doIfFailure { case e => logger.error(e.getMessage, e) }
     .doIfFailure { case e => Console.err.println(s"FAILED: ${ e.getMessage }") }
 }
-

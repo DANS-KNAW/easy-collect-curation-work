@@ -15,7 +15,21 @@
 # limitations under the License.
 #
 
-echo -n "Pre-creating log..."
-TEMPDIR=data
-touch $TEMPDIR/easy-collect-curation-work.log
+DATADIR=data
+EASY_COMMON_CURATION_AREA=$DATADIR/easy-common-curation-area
+DATAMANAGER_CURATION_AREAS=$DATADIR/datamanager-curation-areas
+
+echo "Pre-creating log..."
+touch $DATADIR/easy-collect-curation-work.log
+
+echo "Delete test data from $EASY_COMMON_CURATION_AREA..."
+rm -r ${EASY_COMMON_CURATION_AREA}
+echo "Delete test data from $DATAMANAGER_CURATION_AREAS..."
+rm -r ${DATAMANAGER_CURATION_AREAS}
+
+echo "Copy test input into $EASY_COMMON_CURATION_AREA.."
+cp -r src/test/resources/easy-common-curation-area ${DATADIR}
+echo "Copy test input into $DATAMANAGER_CURATION_AREAS.."
+cp -r src/test/resources/datamanager-curation-areas ${DATAMANAGER_CURATION_AREAS}
+
 echo "OK"
