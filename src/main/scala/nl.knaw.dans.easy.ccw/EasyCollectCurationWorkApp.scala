@@ -38,11 +38,11 @@ class EasyCollectCurationWorkApp(configuration: Configuration) extends DebugEnha
   }
 
   private def noDatamanagerUserID(depositProperties: PropertiesConfiguration): Boolean = {
-    depositProperties.getString("datamanager.userId", "").isEmpty
+    depositProperties.getString("curation.datamanager.userId", "").isEmpty
   }
 
   private def noDatamanagerEmail(depositProperties: PropertiesConfiguration): Boolean = {
-    depositProperties.getString("datamanager.email", "").isEmpty
+    depositProperties.getString("curation.datamanager.email", "").isEmpty
   }
 
   private def collectDeposit(datamanager: DatamanagerId, deposit: File): Unit = {
