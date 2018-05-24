@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.FileAppender">
+        <file>target/test/test.log</file>
         <encoder>
-            <pattern>%-5level %msg%n</pattern>
+            <pattern>[%date{ISO8601}] %-5level %msg%n</pattern>
         </encoder>
     </appender>
 
     <!-- No logging during the build -->
-    <root level="off" >
-        <appender-ref ref="STDOUT" />
+    <root level="off">
+        <appender-ref ref="STDOUT"/>
     </root>
 
     <!-- Set log level during test with system property, e.g., mvn test -DLOG_LEVEL=debug -->
-    <logger name="nl.knaw.dans.easy" level="${LOG_LEVEL:-off}" />
-    <logger name="org.scalatest" level="info" />
+    <logger name="nl.knaw.dans.easy" level="info"/>
+    <logger name="org.scalatest" level="info"/>
 
 </configuration>
