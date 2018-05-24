@@ -23,11 +23,7 @@ import scala.collection.JavaConverters._
 import scala.language.postfixOps
 import scala.util.Try
 
-class EasyCollectCurationWorkApp(configuration: Configuration) extends DebugEnhancedLogging {
-
-  val commonCurationArea = File(configuration.properties.getString("curation.common.directory"))
-  val managerCurationDirString = configuration.properties.getString("curation.personal.directory")
-  val datamanagerProperties = configuration.datamanagers
+class EasyCollectCurationWorkApp(commonCurationArea: File, managerCurationDirString: String, datamanagerProperties: PropertiesConfiguration) extends DebugEnhancedLogging {
 
   private def isCurated(depositProperties: PropertiesConfiguration): Boolean = {
     depositProperties.getString("curation.performed", "") == "yes"
@@ -71,7 +67,7 @@ class EasyCollectCurationWorkApp(configuration: Configuration) extends DebugEnha
     dir.list.toList.map(deposit => collectDeposit(datamanager, deposit))
   }
 
-  private def getDatamanagers(): List[String] = {
+  def getDatamanagers: List[String] = {
     datamanagerProperties.getKeys.asScala.toList.map(key => key.substring(0, key.indexOf('.'))).distinct
   }
 
@@ -83,5 +79,6 @@ class EasyCollectCurationWorkApp(configuration: Configuration) extends DebugEnha
         collectDatamanagersCuratedDeposits(datamanager, curationDirectory)
     })
     logger.info(s"-- Collection of curated deposits completed --")
+
   }
 }

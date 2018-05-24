@@ -24,8 +24,11 @@ import scala.language.reflectiveCalls
 object Command extends App with DebugEnhancedLogging {
 
   val configuration = Configuration(File(System.getProperty("app.home")))
-  //  val configuration = Configuration(File("home"))
-  val app = new EasyCollectCurationWorkApp(configuration)
+  val commonCurationArea = File(configuration.properties.getString("curation.common.directory"))
+  val managerCurationDirString = configuration.properties.getString("curation.personal.directory")
+  val datamanagerProperties = configuration.datamanagers
+
+  val app = new EasyCollectCurationWorkApp(commonCurationArea, managerCurationDirString, datamanagerProperties)
   app.run()
     .doIfSuccess { _ => Console.err.println(s"Collection of curated deposits completed") }
     .doIfFailure { case e => logger.error(e.getMessage, e) }
