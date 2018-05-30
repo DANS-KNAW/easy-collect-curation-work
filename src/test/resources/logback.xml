@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT"
+    <!-- We write here into a file instead of STDOUT to be able to test the contents of the log file -->
+    <appender name="FILE"
               class="ch.qos.logback.core.FileAppender">
         <file>target/test/test.log</file>
         <encoder>
@@ -10,10 +11,9 @@
 
     <!-- No logging during the build -->
     <root level="off">
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 
-    <!-- Set log level during test with system property, e.g., mvn test -DLOG_LEVEL=debug -->
     <logger name="nl.knaw.dans.easy" level="info"/>
     <logger name="org.scalatest" level="info"/>
 

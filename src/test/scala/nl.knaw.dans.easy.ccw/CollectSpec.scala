@@ -57,26 +57,26 @@ class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
     collector.run() shouldBe a[Success[_]]
   }
 
-  "it" should "find two datamanager user ids" in {
+  it should "find two datamanager user ids" in {
     collector.getDatamanagers should have size 2
   }
 
-  "it" should "list correct error messages to the log file" in {
-    testLog.contentAsString should include(s"ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, is curated, but is in state DRAFT")
-    testLog.contentAsString should include(s"ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no datamanager userId property")
-    testLog.contentAsString should include(s"ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no datamanager email property")
-    testLog.contentAsString should include(s"ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no state description property")
+  it should "list correct error messages to the log file" in {
+    testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, is curated, but is in state DRAFT")
+    testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no value for property 'curation.datamanager.userId'")
+    testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no value for property 'curation.datamanager.userId'")
+    testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no value for property 'state.description'")
   }
 
-  "it" should "list messages about collected deposits to the log file" in {
-    testLog.contentAsString should include(s"INFO  Deposit 38bc40f9-12d7-42c6-808a-8eac77bfc726 (SUBMITTED), curated by janneke, has been moved to common curation area")
+  it should "list messages about collected deposits to the log file" in {
+    testLog.contentAsString should include("INFO  Deposit 38bc40f9-12d7-42c6-808a-8eac77bfc726 (SUBMITTED), curated by janneke, has been moved to common curation area")
   }
 
-  "it" should "have no deposits curated by datamanager jip in the log file" in {
+  it should "have no deposits curated by datamanager jip in the log file" in {
     testLog.contentAsString should not include (s"jip")
   }
 
-  "it" should "have moved one deposit from a datamager curation area to the common curation areas" in {
+  it should "have moved one deposit from a datamager curation area to the common curation areas" in {
     jannekesCurationArea.list should have size 3
     commonCurationArea.list should have size 1
     collector.run() shouldBe a[Success[_]]

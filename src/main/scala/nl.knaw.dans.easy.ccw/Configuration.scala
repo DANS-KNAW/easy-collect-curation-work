@@ -19,6 +19,8 @@ import better.files.File
 import better.files.File.root
 import org.apache.commons.configuration.PropertiesConfiguration
 
+import scala.language.postfixOps
+
 case class Configuration(version: String, properties: PropertiesConfiguration, datamanagers: PropertiesConfiguration)
 
 object Configuration {
@@ -35,11 +37,11 @@ object Configuration {
       version = (home / "bin" / "version").contentAsString,
       properties = new PropertiesConfiguration() {
         setDelimiterParsingDisabled(true)
-        load((cfgPath / "application.properties").toJava)
+        load(cfgPath / "application.properties" toJava)
       },
       datamanagers = new PropertiesConfiguration() {
         setDelimiterParsingDisabled(true)
-        load((cfgPath / "datamanager.properties").toJava)
+        load(cfgPath / "datamanager.properties" toJava)
       }
     )
   }

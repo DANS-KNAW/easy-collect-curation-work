@@ -28,7 +28,7 @@ echo "Delete test data from $DATAMANAGER_CURATION_AREAS..."
 rm -r ${DATAMANAGER_CURATION_AREAS}
 
 echo "Copy test input into $EASY_COMMON_CURATION_AREA.."
-cp -r src/test/resources/easy-common-curation-area ${DATADIR}
+cp -r src/test/resources/easy-common-curation-area ${EASY_COMMON_CURATION_AREA}
 echo "Copy test input into $DATAMANAGER_CURATION_AREAS.."
 cp -r src/test/resources/datamanager-curation-areas ${DATAMANAGER_CURATION_AREAS}
 
