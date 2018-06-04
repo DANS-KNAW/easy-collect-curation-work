@@ -2,9 +2,9 @@
 <configuration>
 	<appender name="FILE"
 			  class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${user.home}/easy-collect-curation-work.log</file>
+		<file>/var/opt/dans.knaw.nl/log/easy-collect-curation-work/easy-collect-curation-work.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${user.home}/easy-collect-curation-work.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>/var/opt/dans.knaw.nl/log/easy-collect-curation-work/easy-collect-curation-work.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder>
