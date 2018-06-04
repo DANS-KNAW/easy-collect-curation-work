@@ -16,6 +16,7 @@
 package nl.knaw.dans.easy.ccw
 
 import better.files.File
+import nl.knaw.dans.easy.ccw.Command.configuration
 import org.apache.commons.configuration.PropertiesConfiguration
 import org.scalatest.BeforeAndAfterAll
 
@@ -34,11 +35,12 @@ class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
   val datamanagerProperties = configuration.datamanagers
   val commonCurationArea = testDir / "easy-common-curation-area"
   val datamanagerCurationAreas = testDir / "datamanager-curation-areas"
-  val managerCurationDirString = datamanagerCurationAreas / "$unix-user/curation-area" toString
+  val managerCurationDir = datamanagerCurationAreas / "$unix-user/curation-area" toString
+  def managerCurationArea(datamanager: DatamanagerId) = File(managerCurationDir.replace("$unix-user", datamanager))
   val jannekesCurationArea = datamanagerCurationAreas / "janneke/curation-area"
   val testLog = testDir / ".." / "test.log"
 
-  val collector = new EasyCollectCurationWorkApp(commonCurationArea, managerCurationDirString, datamanagerProperties)
+  val collector = new EasyCollectCurationWorkApp(commonCurationArea, managerCurationArea, datamanagerProperties)
 
   override def beforeAll(): Unit = {
     testLog delete (true)

@@ -23,20 +23,16 @@ import scala.collection.JavaConverters._
 import scala.language.postfixOps
 import scala.util.Try
 
-class EasyCollectCurationWorkApp(commonCurationArea: File, managerCurationDirString: String, datamanagerProperties: PropertiesConfiguration) extends DebugEnhancedLogging {
+class EasyCollectCurationWorkApp(commonCurationArea: File, managerCurationArea: DatamanagerId => File, datamanagerProperties: PropertiesConfiguration) extends DebugEnhancedLogging {
 
   private def isCurated(depositProperties: PropertiesConfiguration): Boolean = {
     depositProperties.getBoolean("curation.performed")
   }
 
   private def requiredPropertiesPresent(datamanager: DatamanagerId, deposit: File, depositProperties: PropertiesConfiguration, keys: List[String]): Boolean = {
-    var requiredPropertiesPresent = true
-    for (key <- keys
-         if depositProperties.getString(key, "").isEmpty) {
-      logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, has no value for property '$key'")
-      requiredPropertiesPresent = false
-    }
-    requiredPropertiesPresent
+    val invalidKeys = keys.filter(key => depositProperties.getString(key, "").isEmpty)
+    invalidKeys.foreach(key => logger.error(s"Deposit ${ deposit.name }, curated by $datamanager, has no value for property '$key'"))
+    invalidKeys.isEmpty
   }
 
   private def correctState(datamanager: DatamanagerId, deposit: File, state: String): Boolean = {
@@ -65,17 +61,17 @@ class EasyCollectCurationWorkApp(commonCurationArea: File, managerCurationDirStr
   }
 
   private def collectDatamanagersCuratedDeposits(datamanager: DatamanagerId, dir: File): Unit = {
-    dir.list.toList.foreach(deposit => collectDeposit(datamanager, deposit))
+    dir.list.foreach(deposit => collectDeposit(datamanager, deposit))
   }
 
-  def getDatamanagers: List[String] = {
+  def getDatamanagers: List[DatamanagerId] = {
     datamanagerProperties.getKeys.asScala.toList.map(key => key.substring(0, key.indexOf('.'))).distinct
   }
 
   def run(): Try[Unit] = Try {
     logger.info(s"-- Collection of curated deposits started --")
     getDatamanagers.foreach(datamanager => {
-      val curationDirectory = File(managerCurationDirString.replace("$unix-user", datamanager))
+      val curationDirectory = managerCurationArea(datamanager)
       if (curationDirectory.exists)
         collectDatamanagersCuratedDeposits(datamanager, curationDirectory)
     })
