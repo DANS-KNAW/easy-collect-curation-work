@@ -16,14 +16,12 @@
 package nl.knaw.dans.easy.ccw
 
 import better.files.File
-import nl.knaw.dans.easy.ccw.Command.configuration
 import org.apache.commons.configuration.PropertiesConfiguration
-import org.scalatest.BeforeAndAfterAll
 
 import scala.language.postfixOps
 import scala.util.Success
 
-class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
+class CollectSpec extends TestSupportFixture {
 
   val resourceDir = File(getClass.getResource("/"))
   val configuration = new Configuration("version x.y.z",
@@ -42,13 +40,10 @@ class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
 
   val collector = new EasyCollectCurationWorkApp(commonCurationArea, managerCurationArea, datamanagerProperties)
 
-  override def beforeAll(): Unit = {
-    testLog delete (true)
-  }
-
   override def beforeEach(): Unit = {
-    commonCurationArea delete (true)
-    jannekesCurationArea delete (true)
+    testLog.clear()
+    commonCurationArea.delete(swallowIOExceptions = true)
+    jannekesCurationArea.delete(swallowIOExceptions = true)
     File(getClass.getResource("/easy-common-curation-area")) copyTo commonCurationArea
     File(getClass.getResource("/datamanager-curation-areas/janneke/curation-area")) copyTo jannekesCurationArea
     commonCurationArea.toJava should exist
@@ -64,6 +59,7 @@ class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
   }
 
   it should "list correct error messages to the log file" in {
+    collector.run() shouldBe a[Success[_]]
     testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, is curated, but is in state DRAFT")
     testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no value for property 'curation.datamanager.userId'")
     testLog.contentAsString should include("ERROR Deposit 48bc40f9-12d7-42c6-808a-8eac77bfc726, curated by janneke, has no value for property 'curation.datamanager.userId'")
@@ -71,10 +67,12 @@ class CollectSpec extends TestSupportFixture with BeforeAndAfterAll {
   }
 
   it should "list messages about collected deposits to the log file" in {
+    collector.run() shouldBe a[Success[_]]
     testLog.contentAsString should include("INFO  Deposit 38bc40f9-12d7-42c6-808a-8eac77bfc726 (SUBMITTED), curated by janneke, has been moved to common curation area")
   }
 
   it should "have no deposits curated by datamanager jip in the log file" in {
+    collector.run() shouldBe a[Success[_]]
     testLog.contentAsString should not include (s"jip")
   }
 
