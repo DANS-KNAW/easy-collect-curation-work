@@ -27,7 +27,7 @@ object Configuration {
 
   def apply(home: File): Configuration = {
     val cfgPath = Seq(
-      root / "etc" / "opt" / "dans.knaw.nl" / "easy-manage-curation-work",
+      root / "etc" / "opt" / "dans.knaw.nl" / "easy-collect-curation-work",
       home / "cfg"
     )
       .find(_.exists)
