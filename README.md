@@ -17,7 +17,8 @@ Job that collects the curated deposits from the data managers' personal curation
 ARGUMENTS
 ---------
 
-None
+ -h, --help      Show help message
+ -v, --version   Show version of this program
 
 INSTALLATION AND CONFIGURATION
 ------------------------------

@@ -22,7 +22,7 @@ class CommandLineOptions(args: Array[String], version: String) extends ScallopCo
   editBuilder(_.setHelpWidth(110))
   printedName = "easy-collect-curation-work"
   private val SUBCOMMAND_SEPARATOR = "---\n"
-  val description = ""
+  val description = "Job that collects the curated deposits from the data managers' personal curation areas"
   val synopsis: String =
   s"  $printedName "
 
