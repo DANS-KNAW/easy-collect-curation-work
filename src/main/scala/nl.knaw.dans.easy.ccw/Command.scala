@@ -24,6 +24,7 @@ import scala.language.reflectiveCalls
 object Command extends App with DebugEnhancedLogging {
 
   val configuration = Configuration(File(System.getProperty("app.home")))
+  val commandLine: CommandLineOptions = new CommandLineOptions(args, configuration.version)
   val commonCurationArea = File(configuration.properties.getString("curation.common.directory"))
   def managerCurationArea(datamanager: DatamanagerId) = File(configuration.properties.getString("curation.personal.directory").replace("$unix-user", datamanager))
   val datamanagerProperties = configuration.datamanagers
