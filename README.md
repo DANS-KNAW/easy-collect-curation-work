@@ -16,9 +16,16 @@ Job that collects the curated deposits from the data managers' personal curation
 
 ARGUMENTS
 ---------
+```
+  Usage: 
+  
+     easy-split-multi-deposit
 
- -h, --help      Show help message
- -v, --version   Show version of this program
+  Options:
+  
+    -h, --help      Show help message
+    -v, --version   Show version of this program
+```
 
 INSTALLATION AND CONFIGURATION
 ------------------------------
